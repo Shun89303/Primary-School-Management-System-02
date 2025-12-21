@@ -20,7 +20,8 @@ public class StudentService
 	public boolean removeStudent(int id) 
 	{
 		Student student = studentDAO.findStudentById(id);
-		if (student == null) {
+		if (student == null) 
+		{
 			return false;
 		}
 		studentDAO.deleteStudent(id);
@@ -30,7 +31,8 @@ public class StudentService
 	public boolean editStudent(int id, String name, int grade) 
 	{
 		Student student = studentDAO.findStudentById(id);
-		if (student == null) {
+		if (student == null) 
+		{
 			return false;
 		}
 		student.setName(name);
@@ -39,7 +41,8 @@ public class StudentService
 		return true;
 	}
 	
-	public List<Student> getAllStudents() {
+	public List<Student> getAllStudents() 
+	{
 		return studentDAO.getAllStudents();
 	}
 }
