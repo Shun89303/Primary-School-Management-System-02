@@ -1,5 +1,8 @@
 package primarySchoolManagementSystem02;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,12 +13,18 @@ public class StudentDAO {
 	private final String user;
 	private final String password;
 	
-	public StudentDAO() 
-	{
-		this.url = "jdbc:mysql://localhost/student_info";
-		this.user = "root";
-		this.password = "root1234";
-	}
+	public StudentDAO() {
+        Properties props = new Properties();
+        try (FileInputStream fis = new FileInputStream("db.properties")) {
+            props.load(fis);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load database properties", e);
+        }
+
+        this.url = props.getProperty("url");
+        this.user = props.getProperty("user");
+        this.password = props.getProperty("password");
+    }
 	
 	private Connection getConnection() throws SQLException 
 	{
