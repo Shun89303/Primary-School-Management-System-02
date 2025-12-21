@@ -27,7 +27,7 @@ public class Main
 					
 					service.addStudent(name, grade);
 					break;
-				case 2: service.viewAllStudents(); break;
+				case 2:  break;
 				case 3: 
 					int idEdit = idHelper();
 					

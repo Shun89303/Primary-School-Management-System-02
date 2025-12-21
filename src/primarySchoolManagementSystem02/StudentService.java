@@ -1,58 +1,45 @@
 package primarySchoolManagementSystem02;
 
-//import java.util.HashMap;
-//import java.util.Map;
+import java.util.List;
 
 public class StudentService 
 {
-	
-//	private final Map<Integer, Student> students;
+	private final StudentDAO studentDAO;
 	
 	public StudentService() 
 	{
-//		this.students = new HashMap<>();
+		this.studentDAO = new StudentDAO();
 	}
 	
 	public void addStudent(String name, int grade) 
 	{
 		Student student = new Student(name, grade);
-//		students.put(student.getId(), student);
-		System.out.println("Student added");
+		studentDAO.insertStudent(student);
 	}
 	
-	public void removeStudent(int id) 
+	public boolean removeStudent(int id) 
 	{
-//		if (students.remove(id) != null) {
-//			System.out.println("Student removed");
-//		}
-//		else {
-//			System.out.println("Student not found");
-//		}
+		Student student = studentDAO.findStudentById(id);
+		if (student == null) {
+			return false;
+		}
+		studentDAO.deleteStudent(id);
+		return true;
 	}
 	
-	public void editStudent(int id, String name, int grade) 
+	public boolean editStudent(int id, String name, int grade) 
 	{
-//		Student student = students.get(id);
-//		if (student == null) {
-//			System.out.println("Student not found");
-//			return;
-//		}
-//		student.setName(name);
-//		student.setGrade(grade);
-//		System.out.println("Student info updated");
+		Student student = studentDAO.findStudentById(id);
+		if (student == null) {
+			return false;
+		}
+		student.setName(name);
+		student.setGrade(grade);
+		studentDAO.updateStudent(student);
+		return true;
 	}
 	
-	public void viewAllStudents() 
-	{
-//		if (students.isEmpty()) 
-//		{
-//			System.out.println("No students to display.");
-//			return;
-//		}
-//		System.out.println("All Students:");
-//		for (Student s : students.values()) 
-//		{
-//			System.out.println(s);
-//		}
+	public List<Student> getAllStudents() {
+		return studentDAO.getAllStudents();
 	}
 }
