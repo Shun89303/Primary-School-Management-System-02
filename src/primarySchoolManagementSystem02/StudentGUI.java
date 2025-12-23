@@ -3,6 +3,7 @@ package primarySchoolManagementSystem02;
 import java.awt.*;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 
 public class StudentGUI extends JFrame
 {
@@ -21,17 +22,20 @@ public class StudentGUI extends JFrame
 	private void initComponents() 
 	{
 		setTitle("Primary School Manangement System");
-		setSize(500, 700);
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setLocationRelativeTo(null);
+		
 		
 		Container container = getContentPane();
-		container.setLayout(new FlowLayout());
+		container.setLayout(new BorderLayout());
 		
 		JPanel mainP = new JPanel();
 		mainP.setLayout(new BoxLayout(mainP, BoxLayout.Y_AXIS));
 		mainP.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		container.add(mainP);
+		
+		JScrollPane scrollPane = new JScrollPane(mainP);
+		scrollPane.setPreferredSize(new Dimension(700, 800));
+		container.add(scrollPane, BorderLayout.CENTER);
 		
 		JPanel addStdP = addStudentPanel();
 		mainP.add(addStdP);
@@ -45,13 +49,19 @@ public class StudentGUI extends JFrame
 		JPanel viewStdP = viewStudentsPanel();
 		mainP.add(viewStdP);
 		
+		pack();
+		setLocationRelativeTo(null);
 		setVisible(true);
 	}
 	
 	private JPanel addStudentPanel() 
 	{
 		JPanel addStdP = new JPanel(new GridLayout(1, 2));
-		addStdP.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		TitledBorder addBorder = BorderFactory.createTitledBorder("Add Student");
+		addBorder.setTitleFont(new Font("Arial", Font.BOLD, 14));
+		addBorder.setTitleColor(Color.BLUE);
+		addStdP.setBorder(BorderFactory.createCompoundBorder(addBorder,
+				BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 		
 		JPanel nameGradeP = new JPanel(new GridLayout(2, 1));
 		JPanel nameP = new JPanel(new FlowLayout());
@@ -98,7 +108,11 @@ public class StudentGUI extends JFrame
 	private JPanel editStudentPanel() 
 	{
 		JPanel editStdP = new JPanel(new GridLayout(1, 2));
-		editStdP.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		TitledBorder editBorder = BorderFactory.createTitledBorder("Edit Student");
+		editBorder.setTitleFont(new Font("Arial", Font.BOLD, 14));
+		editBorder.setTitleColor(Color.MAGENTA);
+		editStdP.setBorder(BorderFactory.createCompoundBorder(editBorder,
+	            BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 		
 		JPanel idNameGradeP = new JPanel(new GridLayout(3, 1));
 		JPanel idP = new JPanel(new FlowLayout());
@@ -159,7 +173,11 @@ public class StudentGUI extends JFrame
 	private JPanel removeStudentPanel() 
 	{
 		JPanel removeStdP = new JPanel(new GridLayout(1, 2));
-		removeStdP.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		TitledBorder removeBorder = BorderFactory.createTitledBorder("Remove Student");
+		removeBorder.setTitleFont(new Font("Arial", Font.BOLD, 14));
+		removeBorder.setTitleColor(Color.RED);
+		removeStdP.setBorder(BorderFactory.createCompoundBorder(removeBorder,
+	            BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 		
 		JPanel idP = new JPanel(new FlowLayout());
 		JPanel buttonP = new JPanel(new FlowLayout());
@@ -182,7 +200,11 @@ public class StudentGUI extends JFrame
 	private JPanel viewStudentsPanel() 
 	{
 		JPanel viewStdP = new JPanel(new BorderLayout());
-		viewStdP.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		TitledBorder viewBorder = BorderFactory.createTitledBorder("View Students");
+		viewBorder.setTitleFont(new Font("Arial", Font.BOLD, 14));
+	    viewBorder.setTitleColor(Color.DARK_GRAY);
+	    viewStdP.setBorder(BorderFactory.createCompoundBorder(viewBorder,
+	            BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 		
 		viewStdB = new JButton("View");
 		viewStdB.setPreferredSize(new Dimension(80, 30));
