@@ -53,6 +53,7 @@ public class StudentGUI extends JFrame
 		
 		pack();
 		setLocationRelativeTo(null);
+		refreshStudentView();
 		setVisible(true);
 	}
 	
@@ -332,6 +333,14 @@ public class StudentGUI extends JFrame
 	            viewStdArea.append(student.toString() + "\n");
 	        });
 	    });
+	}
+	
+	private void refreshStudentView() 
+	{
+		viewStdArea.setText(""); // clear previous text
+        studentService.getAllStudents().forEach(student -> {
+            viewStdArea.append(student.toString() + "\n");
+        });
 	}
 	
 	private void addActionListeners() 
