@@ -11,6 +11,8 @@ public class StudentGUI extends JFrame
 	private JTextField addName, editID, editName, removeID;
 	private JButton addStdB, editStdB, removeStdB, viewStdB;
 	private JTextArea viewStdArea;
+	private JRadioButton addGrade1, addGrade2, addGrade3, addGrade4;
+	private JRadioButton editGrade1, editGrade2, editGrade3, editGrade4;
 	
 	public StudentGUI() 
 	{
@@ -77,20 +79,20 @@ public class StudentGUI extends JFrame
 		gradeP.add(new JLabel("Grade: "));
 		gradeP.add(gradeccsP);
 		
-		JRadioButton grade1 = new JRadioButton("1");
-		gradeccsP.add(grade1);
-		JRadioButton grade2 = new JRadioButton("2");
-		gradeccsP.add(grade2);
-		JRadioButton grade3 = new JRadioButton("3");
-		gradeccsP.add(grade3);
-		JRadioButton grade4 = new JRadioButton("4");
-		gradeccsP.add(grade4);
+		addGrade1 = new JRadioButton("1");
+		gradeccsP.add(addGrade1);
+		addGrade2 = new JRadioButton("2");
+		gradeccsP.add(addGrade2);
+		addGrade3 = new JRadioButton("3");
+		gradeccsP.add(addGrade3);
+		addGrade4 = new JRadioButton("4");
+		gradeccsP.add(addGrade4);
 		
 		ButtonGroup gradeGroup = new ButtonGroup();
-		gradeGroup.add(grade1);
-		gradeGroup.add(grade2);
-		gradeGroup.add(grade3);
-		gradeGroup.add(grade4);
+		gradeGroup.add(addGrade1);
+		gradeGroup.add(addGrade2);
+		gradeGroup.add(addGrade3);
+		gradeGroup.add(addGrade4);
 		
 		nameGradeP.add(nameP);
 		nameGradeP.add(gradeP);
@@ -139,20 +141,20 @@ public class StudentGUI extends JFrame
 		
 		gradeP.add(new JLabel("Grade: "));
 		
-		JRadioButton grade1 = new JRadioButton("1");
-		gradeccsP.add(grade1);
-		JRadioButton grade2 = new JRadioButton("2");
-		gradeccsP.add(grade2);
-		JRadioButton grade3 = new JRadioButton("3");
-		gradeccsP.add(grade3);
-		JRadioButton grade4 = new JRadioButton("4");
-		gradeccsP.add(grade4);
+		editGrade1 = new JRadioButton("1");
+		gradeccsP.add(editGrade1);
+		editGrade2 = new JRadioButton("2");
+		gradeccsP.add(editGrade2);
+		editGrade3 = new JRadioButton("3");
+		gradeccsP.add(editGrade3);
+		editGrade4 = new JRadioButton("4");
+		gradeccsP.add(editGrade4);
 		
 		ButtonGroup gradeGroup = new ButtonGroup();
-		gradeGroup.add(grade1);
-		gradeGroup.add(grade2);
-		gradeGroup.add(grade3);
-		gradeGroup.add(grade4);
+		gradeGroup.add(editGrade1);
+		gradeGroup.add(editGrade2);
+		gradeGroup.add(editGrade3);
+		gradeGroup.add(editGrade4);
 		
 		gradeP.add(gradeccsP);
 		
@@ -221,7 +223,125 @@ public class StudentGUI extends JFrame
 		return viewStdP;
 	}
 	
-	private void addActionListeners() {
+	private int getSelectedGrade(JRadioButton[] gradeButtons) 
+	{
+		for (int i = 0; i < gradeButtons.length; i++) 
+		{
+			if (gradeButtons[i].isSelected()) return i + 1;
+		}
+		return -1;
+	}
+	
+	private void addStdAction() 
+	{
+		addStdB.addActionListener(e -> {
+			String name = addName.getText().trim();
+			int grade = getSelectedGrade(new JRadioButton[] {addGrade1, addGrade2, addGrade3, addGrade4});
+			
+			if (name.isEmpty() || grade == -1) {
+				JOptionPane.showMessageDialog(this, "Please enter a name and select a grade.",
+												"Input Error", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			
+			studentService.addStudent(name, grade);
+			
+			JOptionPane.showMessageDialog(this, "Student added successfully!");
+			addName.setText("");
+			addGrade1.setSelected(false);
+			addGrade2.setSelected(false);
+			addGrade3.setSelected(false);
+			addGrade4.setSelected(false);
+		});
+	}
+	
+	private void editStdAction() 
+	{
+		editStdB.addActionListener(e -> {
+	        String idText = editID.getText().trim();
+	        String name = editName.getText().trim();
+	        int grade = getSelectedGrade(new JRadioButton[]{editGrade1, editGrade2, editGrade3, editGrade4});
+
+	        if (idText.isEmpty() || name.isEmpty() || grade == -1) {
+	            JOptionPane.showMessageDialog(this, "Please enter ID, name, and select a grade.", 
+	                                          "Input Error", JOptionPane.WARNING_MESSAGE);
+	            return;
+	        }
+
+	        int id;
+	        try {
+	            id = Integer.parseInt(idText);
+	        } catch (NumberFormatException ex) {
+	            JOptionPane.showMessageDialog(this, "ID must be a number.", 
+	                                          "Input Error", JOptionPane.WARNING_MESSAGE);
+	            return;
+	        }
+
+	        boolean success = studentService.editStudent(id, name, grade);
+	        if (success) {
+	            JOptionPane.showMessageDialog(this, "Student edited successfully!");
+	            editID.setText("");
+	            editName.setText("");
+	            editGrade1.setSelected(false);
+	            editGrade2.setSelected(false);
+	            editGrade3.setSelected(false);
+	            editGrade4.setSelected(false);
+	        } else {
+	            JOptionPane.showMessageDialog(this, "Student with ID " + id + " not found.", 
+	                                          "Edit Failed", JOptionPane.ERROR_MESSAGE);
+	        }
+	    });
+	}
+	
+	private void removeStdAction() 
+	{
+		removeStdB.addActionListener(e -> {
+	        String idText = removeID.getText().trim();
+
+	        if (idText.isEmpty()) {
+	            JOptionPane.showMessageDialog(this, "Please enter the student ID to remove.", 
+	                                          "Input Error", JOptionPane.WARNING_MESSAGE);
+	            return;
+	        }
+
+	        int id;
+	        try {
+	            id = Integer.parseInt(idText);
+	        } catch (NumberFormatException ex) {
+	            JOptionPane.showMessageDialog(this, "ID must be a number.", 
+	                                          "Input Error", JOptionPane.WARNING_MESSAGE);
+	            return;
+	        }
+
+	        boolean success = studentService.removeStudent(id);
+	        if (success) {
+	            JOptionPane.showMessageDialog(this, "Student removed successfully!");
+	            removeID.setText("");
+	        } else {
+	            JOptionPane.showMessageDialog(this, "Student with ID " + id + " not found.", 
+	                                          "Remove Failed", JOptionPane.ERROR_MESSAGE);
+	        }
+	    });
+	}
+	
+	private void viewStdAction() 
+	{
+		viewStdB.addActionListener(e -> {
+	        viewStdArea.setText(""); // clear previous text
+	        studentService.getAllStudents().forEach(student -> {
+	            viewStdArea.append(student.toString() + "\n");
+	        });
+	    });
+	}
+	
+	private void addActionListeners() 
+	{
+		addStdAction();
 		
+		editStdAction();
+		
+		removeStdAction();
+		
+		viewStdAction();
 	}
 }
