@@ -253,6 +253,8 @@ public class StudentGUI extends JFrame
 			addGrade2.setSelected(false);
 			addGrade3.setSelected(false);
 			addGrade4.setSelected(false);
+			
+			refreshStudentView();
 		});
 	}
 	
@@ -291,6 +293,7 @@ public class StudentGUI extends JFrame
 	            JOptionPane.showMessageDialog(this, "Student with ID " + id + " not found.", 
 	                                          "Edit Failed", JOptionPane.ERROR_MESSAGE);
 	        }
+	        refreshStudentView();
 	    });
 	}
 	
@@ -322,6 +325,7 @@ public class StudentGUI extends JFrame
 	            JOptionPane.showMessageDialog(this, "Student with ID " + id + " not found.", 
 	                                          "Remove Failed", JOptionPane.ERROR_MESSAGE);
 	        }
+	        refreshStudentView();
 	    });
 	}
 	
