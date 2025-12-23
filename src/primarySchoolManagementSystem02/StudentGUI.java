@@ -11,8 +11,8 @@ public class StudentGUI extends JFrame
 	private JTextField addName, editID, editName, removeID;
 	private JButton addStdB, editStdB, removeStdB, viewStdB;
 	private JTextArea viewStdArea;
-	private JRadioButton addGrade1, addGrade2, addGrade3, addGrade4;
-	private JRadioButton editGrade1, editGrade2, editGrade3, editGrade4;
+	private JComboBox<String> addGradeCombo;
+	private JComboBox<String> editGradeCombo;
 	
 	public StudentGUI() 
 	{
@@ -69,7 +69,6 @@ public class StudentGUI extends JFrame
 		JPanel nameGradeP = new JPanel(new GridLayout(2, 1));
 		JPanel nameP = new JPanel(new FlowLayout());
 		JPanel gradeP = new JPanel(new FlowLayout());
-		JPanel gradeccsP = new JPanel(new FlowLayout()); 
 		JPanel buttonP = new JPanel(new FlowLayout());
 		
 		nameP.add(new JLabel("Name: "));
@@ -78,22 +77,10 @@ public class StudentGUI extends JFrame
 		nameP.add(addName);
 		
 		gradeP.add(new JLabel("Grade: "));
-		gradeP.add(gradeccsP);
 		
-		addGrade1 = new JRadioButton("1");
-		gradeccsP.add(addGrade1);
-		addGrade2 = new JRadioButton("2");
-		gradeccsP.add(addGrade2);
-		addGrade3 = new JRadioButton("3");
-		gradeccsP.add(addGrade3);
-		addGrade4 = new JRadioButton("4");
-		gradeccsP.add(addGrade4);
-		
-		ButtonGroup gradeGroup = new ButtonGroup();
-		gradeGroup.add(addGrade1);
-		gradeGroup.add(addGrade2);
-		gradeGroup.add(addGrade3);
-		gradeGroup.add(addGrade4);
+		String[] grades = {"Select Grade", "1", "2", "3", "4"};
+		addGradeCombo = new JComboBox<>(grades);
+		gradeP.add(addGradeCombo);
 		
 		nameGradeP.add(nameP);
 		nameGradeP.add(gradeP);
@@ -121,7 +108,6 @@ public class StudentGUI extends JFrame
 		JPanel idP = new JPanel(new FlowLayout());
 		JPanel nameP = new JPanel(new FlowLayout());
 		JPanel gradeP = new JPanel(new FlowLayout());
-		JPanel gradeccsP = new JPanel(new FlowLayout()); 
 		JPanel buttonP = new JPanel(new FlowLayout());
 		
 		JLabel idLabel = new JLabel("ID: ");
@@ -142,22 +128,9 @@ public class StudentGUI extends JFrame
 		
 		gradeP.add(new JLabel("Grade: "));
 		
-		editGrade1 = new JRadioButton("1");
-		gradeccsP.add(editGrade1);
-		editGrade2 = new JRadioButton("2");
-		gradeccsP.add(editGrade2);
-		editGrade3 = new JRadioButton("3");
-		gradeccsP.add(editGrade3);
-		editGrade4 = new JRadioButton("4");
-		gradeccsP.add(editGrade4);
-		
-		ButtonGroup gradeGroup = new ButtonGroup();
-		gradeGroup.add(editGrade1);
-		gradeGroup.add(editGrade2);
-		gradeGroup.add(editGrade3);
-		gradeGroup.add(editGrade4);
-		
-		gradeP.add(gradeccsP);
+		String[] grades = {"Select Grade", "1", "2", "3", "4"};
+		editGradeCombo = new JComboBox<>(grades);
+		gradeP.add(editGradeCombo);
 		
 		editStdB = new JButton("Edit");
 		editStdB.setPreferredSize(new Dimension(80, 60));
@@ -224,20 +197,17 @@ public class StudentGUI extends JFrame
 		return viewStdP;
 	}
 	
-	private int getSelectedGrade(JRadioButton[] gradeButtons) 
+	private int getSelectedGrade(JComboBox<String> gradeCombo) 
 	{
-		for (int i = 0; i < gradeButtons.length; i++) 
-		{
-			if (gradeButtons[i].isSelected()) return i + 1;
-		}
-		return -1;
+		int selectedIndex = gradeCombo.getSelectedIndex();
+		return (selectedIndex > 0) ? selectedIndex : -1;
 	}
 	
 	private void addStdAction() 
 	{
 		addStdB.addActionListener(e -> {
 			String name = addName.getText().trim();
-			int grade = getSelectedGrade(new JRadioButton[] {addGrade1, addGrade2, addGrade3, addGrade4});
+			int grade = getSelectedGrade(addGradeCombo);
 			
 			if (name.isEmpty() || grade == -1) {
 				JOptionPane.showMessageDialog(this, "Please enter a name and select a grade.",
@@ -249,10 +219,7 @@ public class StudentGUI extends JFrame
 			
 			JOptionPane.showMessageDialog(this, "Student added successfully!");
 			addName.setText("");
-			addGrade1.setSelected(false);
-			addGrade2.setSelected(false);
-			addGrade3.setSelected(false);
-			addGrade4.setSelected(false);
+			addGradeCombo.setSelectedIndex(0);
 			
 			refreshStudentView();
 		});
@@ -263,7 +230,7 @@ public class StudentGUI extends JFrame
 		editStdB.addActionListener(e -> {
 	        String idText = editID.getText().trim();
 	        String name = editName.getText().trim();
-	        int grade = getSelectedGrade(new JRadioButton[]{editGrade1, editGrade2, editGrade3, editGrade4});
+	        int grade = getSelectedGrade(editGradeCombo);
 
 	        if (idText.isEmpty() || name.isEmpty() || grade == -1) {
 	            JOptionPane.showMessageDialog(this, "Please enter ID, name, and select a grade.", 
@@ -285,10 +252,7 @@ public class StudentGUI extends JFrame
 	            JOptionPane.showMessageDialog(this, "Student edited successfully!");
 	            editID.setText("");
 	            editName.setText("");
-	            editGrade1.setSelected(false);
-	            editGrade2.setSelected(false);
-	            editGrade3.setSelected(false);
-	            editGrade4.setSelected(false);
+	            editGradeCombo.setSelectedIndex(0);
 	        } else {
 	            JOptionPane.showMessageDialog(this, "Student with ID " + id + " not found.", 
 	                                          "Edit Failed", JOptionPane.ERROR_MESSAGE);
