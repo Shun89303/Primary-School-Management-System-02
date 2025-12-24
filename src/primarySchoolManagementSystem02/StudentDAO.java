@@ -45,10 +45,10 @@ public class StudentDAO
 			pst.setString(1, student.getName());
 			pst.setInt(2, student.getGrade());
 			int affectedRows = pst.executeUpdate();
-			if (affectedRows > 0) 
-			{
-				System.out.println("Insert Student Complete");
-			}
+//			if (affectedRows > 0) 
+//			{
+//				System.out.println("Insert Student Complete");
+//			}
 		} 
 		catch (SQLException e) 
 		{
@@ -68,10 +68,10 @@ public class StudentDAO
 			pst.setInt(2, student.getGrade());
 			pst.setInt(3, student.getId());
 			int affectedRows = pst.executeUpdate();
-			if (affectedRows > 0) 
-			{
-				System.out.println("Update Student Complete");
-			}
+//			if (affectedRows > 0) 
+//			{
+//				System.out.println("Update Student Complete");
+//			}
 		} 
 		catch (SQLException e) 
 		{
@@ -88,10 +88,10 @@ public class StudentDAO
 		{
 			pst.setInt(1, id);
 			int affectedRows = pst.executeUpdate();
-			if (affectedRows > 0) 
-			{
-				System.out.println("Delete Student Complete");
-			}
+//			if (affectedRows > 0) 
+//			{
+//				System.out.println("Delete Student Complete");
+//			}
 		} 
 		catch (SQLException e) 
 		{

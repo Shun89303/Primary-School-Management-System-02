@@ -1,16 +1,20 @@
 package primarySchoolManagementSystem02;
 
 import java.awt.*;
-
+import java.util.*;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.*;
 
 public class StudentGUI extends JFrame
 {
 	private final StudentService studentService;
 	private JTextField addName, editID, editName, removeID;
-	private JButton addStdB, editStdB, removeStdB, viewStdB;
-	private JTextArea viewStdArea;
+	private JButton addStdB, editStdB, removeStdB;
+	private JTable studentTable;
+	private JScrollPane tableScrollPane;
+	private DefaultTableModel tableModel;
 	private JComboBox<String> addGradeCombo;
 	private JComboBox<String> editGradeCombo;
 	
@@ -19,6 +23,7 @@ public class StudentGUI extends JFrame
 		this.studentService = new StudentService();
 		initComponents();
 		addActionListeners();
+		refreshStudentTable();
 	}
 	
 	private void initComponents() 
@@ -36,24 +41,16 @@ public class StudentGUI extends JFrame
 		mainP.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		
 		JScrollPane scrollPane = new JScrollPane(mainP);
-		scrollPane.setPreferredSize(new Dimension(700, 800));
+		scrollPane.setPreferredSize(new Dimension(900, 600));
 		container.add(scrollPane, BorderLayout.CENTER);
 		
-		JPanel addStdP = addStudentPanel();
-		mainP.add(addStdP);
-		
-		JPanel editStdP = editStudentPanel();
-		mainP.add(editStdP);
-		
-		JPanel removeStdP = removeStudentPanel();
-		mainP.add(removeStdP);
-		
-		JPanel viewStdP = viewStudentsPanel();
-		mainP.add(viewStdP);
+		mainP.add(addStudentPanel());
+		mainP.add(editStudentPanel());
+		mainP.add(removeStudentPanel());
+		mainP.add(viewStudentsPanel());
 		
 		pack();
 		setLocationRelativeTo(null);
-		refreshStudentView();
 		setVisible(true);
 	}
 	
@@ -77,7 +74,6 @@ public class StudentGUI extends JFrame
 		nameP.add(addName);
 		
 		gradeP.add(new JLabel("Grade: "));
-		
 		String[] grades = {"Select Grade", "1", "2", "3", "4"};
 		addGradeCombo = new JComboBox<>(grades);
 		gradeP.add(addGradeCombo);
@@ -182,17 +178,14 @@ public class StudentGUI extends JFrame
 	    viewStdP.setBorder(BorderFactory.createCompoundBorder(viewBorder,
 	            BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 		
-		viewStdB = new JButton("View");
-		viewStdB.setPreferredSize(new Dimension(80, 30));
-		viewStdP.add(viewStdB, BorderLayout.NORTH);
-		
-		viewStdArea = new JTextArea();
-		JScrollPane viewStdPane = new JScrollPane(viewStdArea);
-		viewStdArea.setEditable(false);
-		viewStdArea.setLineWrap(true);
-		viewStdArea.setWrapStyleWord(true);
-		viewStdArea.setPreferredSize(new Dimension(400, 250));
-		viewStdP.add(viewStdPane, BorderLayout.CENTER);
+	    tableModel = new DefaultTableModel();
+	    studentTable = new JTable(tableModel);
+	    studentTable.setRowHeight(25);
+	    studentTable.setEnabled(false);
+	    
+	    tableScrollPane = new JScrollPane(studentTable);
+	    tableScrollPane.setPreferredSize(new Dimension(800, 300));
+	    viewStdP.add(tableScrollPane, BorderLayout.CENTER);
 		
 		return viewStdP;
 	}
@@ -221,7 +214,7 @@ public class StudentGUI extends JFrame
 			addName.setText("");
 			addGradeCombo.setSelectedIndex(0);
 			
-			refreshStudentView();
+			refreshStudentTable();
 		});
 	}
 	
@@ -256,8 +249,11 @@ public class StudentGUI extends JFrame
 	        } else {
 	            JOptionPane.showMessageDialog(this, "Student with ID " + id + " not found.", 
 	                                          "Edit Failed", JOptionPane.ERROR_MESSAGE);
+	            editID.setText("");
+	            editName.setText("");
+	            editGradeCombo.setSelectedIndex(0);
 	        }
-	        refreshStudentView();
+	        refreshStudentTable();
 	    });
 	}
 	
@@ -288,37 +284,49 @@ public class StudentGUI extends JFrame
 	        } else {
 	            JOptionPane.showMessageDialog(this, "Student with ID " + id + " not found.", 
 	                                          "Remove Failed", JOptionPane.ERROR_MESSAGE);
+	            removeID.setText("");
 	        }
-	        refreshStudentView();
+	        refreshStudentTable();
 	    });
 	}
 	
-	private void viewStdAction() 
+	private void refreshStudentTable() 
 	{
-		viewStdB.addActionListener(e -> {
-	        viewStdArea.setText(""); // clear previous text
-	        studentService.getAllStudents().forEach(student -> {
-	            viewStdArea.append(student.toString() + "\n");
-	        });
-	    });
-	}
-	
-	private void refreshStudentView() 
-	{
-		viewStdArea.setText(""); // clear previous text
-        studentService.getAllStudents().forEach(student -> {
-            viewStdArea.append(student.toString() + "\n");
-        });
+		List<Student> students = studentService.getAllStudents();
+		Map<Integer, List<Student>> gradeMap = new HashMap<>();
+		for (int i = 1; i <= 4; i++) gradeMap.put(i, new ArrayList<>());
+		for (Student s : students) gradeMap.get(s.getGrade()).add(s);
+		
+		int maxRows = gradeMap.values().stream().mapToInt(List::size).max().orElse(0);
+		
+		String[] columns = {"G1 ID", "G1 Name", "G2 ID", "G2 Name", "G3 ID", "G3 Name", "G4 ID", "G4 Name"};
+		Object[][] data = new Object[maxRows][8];
+		
+		for (int row = 0; row < maxRows; row++) {
+			for (int g = 1; g <= 4; g++) {
+				List<Student> list = gradeMap.get(g);
+				if (row < list.size()) {
+					data[row][(g - 1) * 2] = list.get(row).getId();
+					data[row][(g - 1) * 2 + 1] = list.get(row).getName();
+				} else {
+					data[row][(g - 1) * 2] = "";
+					data[row][(g - 1) * 2 + 1] = "";
+				}
+			}
+		}
+		
+		tableModel.setDataVector(data, columns);
+		
+		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+		centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+		for (int i = 0; i < 8; i += 2) tableModel.getColumnName(i);
+		for (int i = 0; i < 8; i += 2) studentTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
 	}
 	
 	private void addActionListeners() 
 	{
 		addStdAction();
-		
 		editStdAction();
-		
 		removeStdAction();
-		
-		viewStdAction();
 	}
 }
